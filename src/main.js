@@ -33,14 +33,33 @@ export default {
 
   methods: {
     ready() {
-      // this.$watch('query', function() {
-        
-      // })
+      
     },
 
     input() {
-      // TODO: Implment rate limiting for input change events
-      console.log(this.query)
+      // implement rate limiting for input change events, same as Bloodhound
+      let func = update();
+      let immediate = false;
+      let wait = this.rateLimitWait;
+
+      let later = function() {
+          timeout = null;
+          if (!immediate) {
+              result = func.apply(context, args);
+          }
+      };
+
+      callNow = immediate && !timeout;
+
+      clearTimeout(timeout);
+      
+      timeout = setTimeout(later, wait);
+      
+      if (callNow) {
+          func.apply(context, args);
+      }
+
+      return;
     },
 
     update () {

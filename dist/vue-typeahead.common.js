@@ -49,7 +49,28 @@ exports.default = {
   methods: {
     ready: function ready() {},
     input: function input() {
-      console.log(this.query);
+      var func = update();
+      var immediate = false;
+      var wait = this.rateLimitWait;
+
+      var later = function later() {
+        timeout = null;
+        if (!immediate) {
+          result = func.apply(context, args);
+        }
+      };
+
+      callNow = immediate && !timeout;
+
+      clearTimeout(timeout);
+
+      timeout = setTimeout(later, wait);
+
+      if (callNow) {
+        func.apply(context, args);
+      }
+
+      return;
     },
     update: function update() {
       var _this = this;
