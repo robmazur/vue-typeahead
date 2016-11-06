@@ -24,7 +24,12 @@ exports.default = {
       current: -1,
       loading: false,
       selectFirst: false,
-      queryParamName: 'q'
+
+      queryParamName: 'q',
+
+      highlight: true,
+      rateLimitBy: 'debounce',
+      rateLimitWait: 300
     };
   },
 
@@ -42,6 +47,10 @@ exports.default = {
   },
 
   methods: {
+    ready: function ready() {},
+    input: function input() {
+      console.log(this.query);
+    },
     update: function update() {
       var _this = this;
 
