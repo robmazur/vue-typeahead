@@ -8,7 +8,12 @@ export default {
       current: -1,
       loading: false,
       selectFirst: false,
-      queryParamName: 'q'
+    
+      queryParamName: 'q',
+
+      highlight: true,
+      rateLimitBy: 'debounce', // debounce or throttle
+      rateLimitWait: 300
     }
   },
 
@@ -27,6 +32,17 @@ export default {
   },
 
   methods: {
+    ready() {
+      // this.$watch('query', function() {
+        
+      // })
+    },
+
+    input() {
+      // TODO: Implment rate limiting for input change events
+      console.log(this.query)
+    },
+
     update () {
       if (!this.query) {
         return this.reset()
