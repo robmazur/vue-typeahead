@@ -1,12 +1,14 @@
 import { util } from 'vue'
 
 export default {
+
   data () {
     return {
       items: [],
       query: '',
       current: -1,
       loading: false,
+      timeout: null,
       selectFirst: false,
     
       queryParamName: 'q',
@@ -38,22 +40,23 @@ export default {
 
     input() {
       // implement rate limiting for input change events, same as Bloodhound
-      let func = update();
+      let context = this, args = arguments;
+      let func = this.update;
       let immediate = false;
       let wait = this.rateLimitWait;
 
       let later = function() {
-          timeout = null;
+          this.timeout = null;
           if (!immediate) {
-              result = func.apply(context, args);
+              func.apply(context, args);
           }
       };
 
-      callNow = immediate && !timeout;
+      let callNow = immediate && !this.timeout;
 
-      clearTimeout(timeout);
+      clearTimeout(this.timeout);
       
-      timeout = setTimeout(later, wait);
+      this.timeout = setTimeout(later, wait);
       
       if (callNow) {
           func.apply(context, args);
@@ -72,6 +75,8 @@ export default {
       }
 
       this.loading = true
+
+      // TODO: Use LruCache and check if this search has already been performed...
 
       this.fetch().then((response) => {
         if (this.query) {

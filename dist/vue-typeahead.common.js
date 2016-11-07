@@ -23,6 +23,7 @@ exports.default = {
       query: '',
       current: -1,
       loading: false,
+      timeout: null,
       selectFirst: false,
 
       queryParamName: 'q',
@@ -49,22 +50,24 @@ exports.default = {
   methods: {
     ready: function ready() {},
     input: function input() {
-      var func = update();
+      var context = this,
+          args = arguments;
+      var func = this.update;
       var immediate = false;
       var wait = this.rateLimitWait;
 
       var later = function later() {
-        timeout = null;
+        this.timeout = null;
         if (!immediate) {
-          result = func.apply(context, args);
+          func.apply(context, args);
         }
       };
 
-      callNow = immediate && !timeout;
+      var callNow = immediate && !this.timeout;
 
-      clearTimeout(timeout);
+      clearTimeout(this.timeout);
 
-      timeout = setTimeout(later, wait);
+      this.timeout = setTimeout(later, wait);
 
       if (callNow) {
         func.apply(context, args);
