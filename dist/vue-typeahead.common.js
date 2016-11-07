@@ -236,12 +236,12 @@ exports.default = {
     resetCache: function resetCache() {
       this.sharedCache.reset();
     },
-    setActive: function setActive(index) {
+    setCurrent: function setCurrent(index) {
       this.current = index;
     },
-    activeClass: function activeClass(index) {
+    currentItemClass: function currentItemClass(index) {
       return {
-        active: this.current === index
+        current: this.current === index
       };
     },
     hit: function hit() {
@@ -293,4 +293,5 @@ exports.default = {
       return this.hasQuery && !this.isLoading && this.totalFound === 0;
     }
   }
+
 };

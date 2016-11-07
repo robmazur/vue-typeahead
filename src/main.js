@@ -65,14 +65,14 @@ export default {
 
     update () {
       if (!this.query) {
-        return this.reset()
+        return this.reset();
       }
 
       if (this.query.length < this.minChars) {
-        return
+        return;
       }
 
-      this.loading = true
+      this.loading = true;
       this.totalFound = null;
 
       // use LruCache and check if this search has already been performed...
@@ -104,33 +104,33 @@ export default {
 
     fetch () {
       if (!this.$http) {
-        return util.warn('You need to install the `vue-resource` plugin', this)
+        return util.warn('You need to install the `vue-resource` plugin', this);
       }
 
       if (!this.src) {
-        return util.warn('You need to set the `src` property', this)
+        return util.warn('You need to set the `src` property', this);
       }
 
       const src = this.queryParamName
         ? this.src
-        : this.src + this.query
+        : this.src + this.query;
 
       const params = this.queryParamName
         ? Object.assign({ [this.queryParamName]: this.query }, this.data)
-        : this.data
+        : this.data;
 
-      return this.$http.get(src, { params })
+      return this.$http.get(src, { params });
     },
 
 
     processResponseData(data) {
       this.totalFound = data.length;
-      this.items = this.limit ? data.slice(0, this.limit) : data
-      this.current = -1
-      this.loading = false
+      this.items = this.limit ? data.slice(0, this.limit) : data;
+      this.current = -1;
+      this.loading = false;
 
       if (this.selectFirst) {
-        this.down()
+        this.down();
       }
     },
 
@@ -154,47 +154,47 @@ export default {
     },
 
 
-    setActive (index) {
-      this.current = index
+    setCurrent (index) {
+      this.current = index;
     },
 
 
-    activeClass (index) {
+    currentItemClass (index) {
       return {
-        active: this.current === index
-      }
+        current: this.current === index
+      };
     },
 
 
     hit () {
       if (this.current !== -1) {
-        this.onHit(this.items[this.current])
+        this.onHit(this.items[this.current]);
       }
     },
 
 
     up () {
       if (this.current > 0) {
-        this.current--
+        this.current--;
       } else if (this.current === -1) {
-        this.current = this.items.length - 1
+        this.current = this.items.length - 1;
       } else {
-        this.current = -1
+        this.current = -1;
       }
     },
 
 
     down () {
       if (this.current < this.items.length - 1) {
-        this.current++
+        this.current++;
       } else {
-        this.current = -1
+        this.current = -1;
       }
     },
 
 
     onHit () {
-      util.warn('You need to implement the `onHit` method', this)
+      util.warn('You need to implement the `onHit` method', this);
     }
 
   },
@@ -202,7 +202,7 @@ export default {
 
   computed: {
     hasItems () {
-      return this.items.length > 0
+      return this.items.length > 0;
     },
 
     isEmpty () {
@@ -218,7 +218,7 @@ export default {
     },
 
     hasQuery () {
-      return !this.isEmpty && this.query.length >= this.minChars
+      return !this.isEmpty && this.query.length >= this.minChars;
     },
 
     hasResults () {
@@ -226,8 +226,8 @@ export default {
     },
 
     hasNoResults () {
-      // TODO: Need to update this after the fetch completes
       return this.hasQuery && !this.isLoading && this.totalFound === 0;
     }
-  },
+  }
+
 }
