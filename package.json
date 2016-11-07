@@ -1,6 +1,6 @@
 {
   "name": "vue-typeahead",
-  "version": "2.3.0",
+  "version": "1.0.1",
   "author": "Robert Mazur <robmazur@gmail.com>",
   "license": "MIT",
   "description": "Enhancements to the Typeahead component for Vue.js by Pantelis Peslis.",
@@ -19,7 +19,7 @@
     "lint": "eslint src demo",
     "dev": "webpack-dev-server --content-base demo/ --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "dist": "babel src/main.js --out-file dist/vue-typeahead.common.js"
+    "dist": "babel src/*.js --out-file dist/vue-typeahead.common.js"
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
@@ -30,6 +30,7 @@
     "babel-cli": "^6.18.0",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-runtime": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
     "babel-preset-stage-2": "^6.0.0",

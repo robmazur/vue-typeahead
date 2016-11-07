@@ -4,11 +4,18 @@ export default {
 
   data () {
     return {
+      sharedCache: null,
       items: [],
       query: '',
       current: -1,
+      totalFound: null,
       loading: false,
       timeout: null,
+
+      cache: true,
+      maxCacheItems: 5,
+      cacheEmptyResults: true,
+      minChars: 0,
       selectFirst: false,
     
       queryParamName: 'q',
@@ -19,39 +26,17 @@ export default {
     }
   },
 
-  computed: {
-    hasItems () {
-      return this.items.length > 0
-    },
-
-    isEmpty () {
-      return !this.query;
-    },
-
-    isDirty () {
-      return !!this.query;
-    },
-
-    isLoading () {
-      return this.loading;
-    },
-
-    hasResults () {
-      return !this.isEmpty && !this.isLoading && this.hasItems;
-    },
-
-    hasNoResults () {
-      return !this.isEmpty && !this.isLoading && !this.hasItems;
-    }
-  },
 
   methods: {
     ready() {
-      
+      this.ensureCacheInit();
     },
 
+
+    /*
+    *   Implements rate limiting for input change events, same as Bloodhound
+    */
     input() {
-      // implement rate limiting for input change events, same as Bloodhound
       let context = this, args = arguments;
       let func = this.update;
       let immediate = false;
@@ -77,33 +62,45 @@ export default {
       return;
     },
 
+
     update () {
       if (!this.query) {
         return this.reset()
       }
 
-      if (this.minChars && this.query.length < this.minChars) {
+      if (this.query.length < this.minChars) {
         return
       }
 
       this.loading = true
+      this.totalFound = null;
 
-      // TODO: Use LruCache and check if this search has already been performed...
+      // use LruCache and check if this search has already been performed...
+      this.ensureCacheInit();
+
+      let cacheKey = this.query.replace(' ', ':');
+
+      if (this.cache && this.sharedCache.has(cacheKey)) {
+        let data = this.sharedCache.get(cacheKey);
+
+        return this.processResponseData(data);
+      }
 
       this.fetch().then((response) => {
         if (this.query) {
           let data = response.data
           data = this.prepareResponseData ? this.prepareResponseData(data) : data
-          this.items = this.limit ? data.slice(0, this.limit) : data
-          this.current = -1
-          this.loading = false
 
-          if (this.selectFirst) {
-            this.down()
+          if (this.cacheEmptyResults || data.length > 0) {
+            this.sharedCache.set(cacheKey, data);   
           }
+
+          this.processResponseData(data);
+        
         }
       })
     },
+
 
     fetch () {
       if (!this.$http) {
@@ -125,15 +122,42 @@ export default {
       return this.$http.get(src, { params })
     },
 
-    reset () {
-      this.items = []
-      this.query = ''
+
+    processResponseData(data) {
+      this.totalFound = data.length;
+      this.items = this.limit ? data.slice(0, this.limit) : data
+      this.current = -1
       this.loading = false
+
+      if (this.selectFirst) {
+        this.down()
+      }
     },
+
+
+    ensureCacheInit() {
+      if (this.cache && !this.sharedCache) {
+        this.sharedCache = new LruCache(this.maxCacheItems);
+      }
+    },
+
+
+    reset () {
+      this.items = [];
+      this.query = '';
+      this.loading = false;
+    },
+
+
+    resetCache() {
+      this.sharedCache.reset();
+    },
+
 
     setActive (index) {
       this.current = index
     },
+
 
     activeClass (index) {
       return {
@@ -141,11 +165,13 @@ export default {
       }
     },
 
+
     hit () {
       if (this.current !== -1) {
         this.onHit(this.items[this.current])
       }
     },
+
 
     up () {
       if (this.current > 0) {
@@ -157,6 +183,7 @@ export default {
       }
     },
 
+
     down () {
       if (this.current < this.items.length - 1) {
         this.current++
@@ -165,8 +192,42 @@ export default {
       }
     },
 
+
     onHit () {
       util.warn('You need to implement the `onHit` method', this)
     }
-  }
+
+  },
+
+
+  computed: {
+    hasItems () {
+      return this.items.length > 0
+    },
+
+    isEmpty () {
+      return !this.query;
+    },
+
+    isDirty () {
+      return !!this.query;
+    },
+
+    isLoading () {
+      return this.loading;
+    },
+
+    hasQuery () {
+      return !this.isEmpty && this.query.length >= this.minChars
+    },
+
+    hasResults () {
+      return this.hasQuery && !this.isLoading && this.hasItems;
+    },
+
+    hasNoResults () {
+      // TODO: Need to update this after the fetch completes
+      return this.hasQuery && !this.isLoading && this.totalFound === 0;
+    }
+  },
 }
