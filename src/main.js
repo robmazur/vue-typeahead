@@ -37,11 +37,11 @@ export default {
     },
 
     hasResults () {
-      return !this.isEmpty && !this.hasItems && !this.isLoading;
+      return !this.isEmpty && !this.isLoading && this.hasItems;
     },
 
     hasNoResults () {
-      return !this.isEmpty && !this.hasItems;
+      return !this.isEmpty && !this.isLoading && !this.hasItems;
     }
   },
 

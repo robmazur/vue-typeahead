@@ -49,10 +49,10 @@ exports.default = {
       return this.loading;
     },
     hasResults: function hasResults() {
-      return !this.isEmpty && !this.hasItems && !this.isLoading;
+      return !this.isEmpty && !this.isLoading && this.hasItems;
     },
     hasNoResults: function hasNoResults() {
-      return !this.isEmpty && !this.hasItems;
+      return !this.isEmpty && !this.isLoading && !this.hasItems;
     }
   },
 
