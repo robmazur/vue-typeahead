@@ -44,6 +44,15 @@ exports.default = {
     },
     isDirty: function isDirty() {
       return !!this.query;
+    },
+    isLoading: function isLoading() {
+      return this.loading;
+    },
+    hasResults: function hasResults() {
+      return !this.isEmpty && !this.hasItems && !this.isLoading;
+    },
+    hasNoResults: function hasNoResults() {
+      return !this.isEmpty && !this.hasItems;
     }
   },
 

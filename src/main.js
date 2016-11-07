@@ -25,11 +25,23 @@ export default {
     },
 
     isEmpty () {
-      return !this.query
+      return !this.query;
     },
 
     isDirty () {
-      return !!this.query
+      return !!this.query;
+    },
+
+    isLoading () {
+      return this.loading;
+    },
+
+    hasResults () {
+      return !this.isEmpty && !this.hasItems && !this.isLoading;
+    },
+
+    hasNoResults () {
+      return !this.isEmpty && !this.hasItems;
     }
   },
 
