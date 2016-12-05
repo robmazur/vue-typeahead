@@ -132,7 +132,7 @@ exports.default = {
 
 
   methods: {
-    ready: function ready() {
+    mounted: function mounted() {
       this.ensureCacheInit();
     },
     input: function input() {

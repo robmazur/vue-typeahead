@@ -28,7 +28,7 @@ export default {
 
 
   methods: {
-    ready() {
+    mounted() {
       this.ensureCacheInit();
     },
 
